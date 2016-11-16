@@ -5,15 +5,26 @@ from SuffixTree import SuffixTree
 def map_dna(input_file):
     # Parse input
     sequence = "mississippi$"
-    reads = []
-    k = 0
+    reads = { 'test1': 'miss', 'test2': 'ssi' }
+    k = 2
 
     # Build Suffix Tree
     suffix_tree = SuffixTree(sequence)
+    suffix_array = suffix_array_from_suffix_tree(suffix_tree)
+    bwt = bwt_from_suffix_array(suffix_array, sequence)
+    first_occurrences = build_first_occurrence(bwt)
+    counts = build_counts(bwt)
+
+    #print suffix_array
+    #print bwt
+    #print first_occurrences
+    #print counts
 
     # Map DNA sequence
-    for read in reads:
-        candidate_indices = find_dna_mapping(suffix_tree, read, k)
+    for read_name, read in reads.iteritems():
+        candidate_indices = find_dna_mapping(suffix_array, bwt, first_occurrences, counts, read, k)
+        print read_name, read
+        print candidate_indices
 
         # filter candidates
 
@@ -22,18 +33,32 @@ def map_dna(input_file):
     # Output results
 
 
-def find_dna_mapping(suffix_tree, read, k):
-    # Prepare pattern matching algorithm
-    suffix_array = suffix_array_from_suffix_tree(suffix_tree)
-    bwt = bwt_from_suffix_array(suffix_array)
-    print suffix_array
-    print bwt
-    return
-    first_occurences = {}
-    counts = {}
+def find_dna_mapping(suffix_array, bwt, first_occurrences, counts, read, k):
 
     def find_pattern_matches(kmer):
-        return []
+        indices = []
+
+        top = 0
+        bottom = len(bwt) - 1
+        kmer_index = len(kmer) - 1
+
+        while top <= bottom:
+            # print top, bottom
+            if kmer_index >= 0:
+                symbol = kmer[kmer_index]
+                kmer_index -= 1
+
+                if symbol in bwt[top:bottom + 1]:
+                    top = first_occurrences[symbol] + counts[symbol][top]
+                    bottom = first_occurrences[symbol] + counts[symbol][bottom + 1] - 1
+                else:
+                    break
+            else:
+                for i in xrange(top, bottom + 1):
+                    indices.append(suffix_array[i])
+                break
+
+        return indices
 
     # Prepare list of kmers. Map each kmer with its position(s) within the read.
     kmer_indices = {}
@@ -54,7 +79,7 @@ def find_dna_mapping(suffix_tree, read, k):
 
         for matching_index in matching_indices:
             for relative_index in relative_indices:
-                potential_read_index = matching_index - relative_index + 1
+                potential_read_index = matching_index - relative_index
 
                 if potential_read_index not in candidate_mapping_indices:
                     candidate_mapping_indices[potential_read_index] = 0
@@ -84,16 +109,43 @@ def suffix_array_from_suffix_tree(suffix_tree):
     return suffix_array
 
 
-def bwt_from_suffix_array(suffix_array):
+def bwt_from_suffix_array(suffix_array, sequence):
     bwt = []
 
     for index in suffix_array:
         if index == 0:
-            bwt.append(len(suffix_array) - 1)
+            bwt.append(sequence[len(suffix_array) - 1])
         else:
-            bwt.append(index - 1)
+            bwt.append(sequence[index - 1])
 
     return bwt
+
+
+def build_first_occurrence(bwt):
+    first_occurrence = {}
+    sorted_bwt = sorted(bwt)
+
+    for i in xrange(len(sorted_bwt)):
+        if sorted_bwt[i] not in first_occurrence:
+            first_occurrence[sorted_bwt[i]] = i
+
+    return first_occurrence
+
+
+def build_counts(bwt):
+    counts = {}
+
+    for i in xrange(len(bwt)):
+        if bwt[i] not in counts:
+            counts[bwt[i]] = [0] * (i + 1)
+
+        for key in counts.keys():
+            if key == bwt[i]:
+                counts[key].append(counts[key][-1] + 1)
+            else:
+                counts[key].append(counts[key][-1])
+
+    return counts
 
 
 if __name__ == "__main__":
