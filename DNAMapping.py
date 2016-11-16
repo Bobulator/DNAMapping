@@ -1,6 +1,7 @@
 import sys
 from SuffixTree import SuffixTree
 from Parser import Parser
+from SAM import SAM
 
 
 def map_dna(args):
@@ -18,18 +19,19 @@ def map_dna(args):
     first_occurrences = build_first_occurrence(bwt)
     counts = build_counts(bwt)
 
+    sam = SAM()
+
     # Map DNA sequence
     for read_name, read in reads.iteritems():
         candidate_indices = find_dna_mapping(suffix_array, bwt, first_occurrences, counts, read, k)
-        print read_name, read
-        print candidate_indices
 
         # filter candidates
         kmers = len(read) - k + 1
         scoring_threshold = threshold_percentage * kmers
         for candidate_index, score in candidate_indices.iteritems():
             if score >= scoring_threshold:
-                print str(candidate_index)
+                print sam.generate_sam_output(read_name=read_name, sequence_name=sequence_name,
+                                              position=candidate_index+1, read=read)
 
         # store results
 
