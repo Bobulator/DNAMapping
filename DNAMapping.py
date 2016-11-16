@@ -5,33 +5,41 @@ from SuffixTree import SuffixTree
 def map_dna(input_file):
     # Parse input
     sequence = "mississippi$"
+    reads = []
     k = 0
 
     # Build Suffix Tree
     suffix_tree = SuffixTree(sequence)
-    #print suffix_tree.nodes
 
     # Map DNA sequence
-    find_dna_mapping(suffix_tree, sequence, k)
+    for read in reads:
+        candidate_indices = find_dna_mapping(suffix_tree, read, k)
+
+        # filter candidates
+
+        # store results
 
     # Output results
 
 
-def find_dna_mapping(suffix_tree, sequence, k):
+def find_dna_mapping(suffix_tree, read, k):
     # Prepare pattern matching algorithm
     suffix_array = suffix_array_from_suffix_tree(suffix_tree)
-    bwt = []
+    bwt = bwt_from_suffix_array(suffix_array)
+    print suffix_array
+    print bwt
+    return
     first_occurences = {}
     counts = {}
 
     def find_pattern_matches(kmer):
         return []
 
-    # Prepare list of kmers. Associate each kmer with its relative position within the sequence.
+    # Prepare list of kmers. Map each kmer with its position(s) within the read.
     kmer_indices = {}
     
-    for i in xrange(len(sequence) - k + 1):
-        kmer = sequence[i:i + k]
+    for i in xrange(len(read) - k + 1):
+        kmer = read[i:i + k]
         
         if kmer not in kmer_indices:
             kmer_indices[kmer] = []
@@ -39,19 +47,19 @@ def find_dna_mapping(suffix_tree, sequence, k):
         kmer_indices[kmer].append(i)
         
     # Perform pattern matching using suffix_tree with each kmer storing results for each matching kmer index relative
-    # to its location within the sequence
+    # to its location within the read, i.e. matching_index - relative_index = potential_read_mapping_index
     candidate_mapping_indices = {}
     for kmer, relative_indices in kmer_indices.iteritems():
         matching_indices = find_pattern_matches(kmer)
 
         for matching_index in matching_indices:
             for relative_index in relative_indices:
-                potential_sequence_index = matching_index - relative_index + 1
+                potential_read_index = matching_index - relative_index + 1
 
-                if potential_sequence_index not in candidate_mapping_indices:
-                    candidate_mapping_indices[potential_sequence_index] = 0
+                if potential_read_index not in candidate_mapping_indices:
+                    candidate_mapping_indices[potential_read_index] = 0
 
-                candidate_mapping_indices[potential_sequence_index] += 1
+                candidate_mapping_indices[potential_read_index] += 1
 
     return candidate_mapping_indices
 
@@ -74,6 +82,18 @@ def suffix_array_from_suffix_tree(suffix_tree):
     traverse_suffix_tree(suffix_tree.get_root_node(), 0)
 
     return suffix_array
+
+
+def bwt_from_suffix_array(suffix_array):
+    bwt = []
+
+    for index in suffix_array:
+        if index == 0:
+            bwt.append(len(suffix_array) - 1)
+        else:
+            bwt.append(index - 1)
+
+    return bwt
 
 
 if __name__ == "__main__":
