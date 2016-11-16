@@ -9,6 +9,6 @@ class SAM:
         tlen = 0
         quality = "*"
 
-        result = [read_name, flag, sequence_name, mapping_quality, cigar, rnext, pnext, tlen, read, quality]
+        result = [read_name, flag, sequence_name, position, mapping_quality, cigar, rnext, pnext, tlen, read, quality]
 
         return "\t".join([str(x) for x in result])
