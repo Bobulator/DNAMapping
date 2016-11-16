@@ -264,7 +264,7 @@ class SuffixTree:
 
 
 if __name__ == "__main__":
-    text = "panamabanana$"
+    text = "mississippi$"
     suffix_tree = SuffixTree(text)
 
     print suffix_tree.get_graphviz_tree()

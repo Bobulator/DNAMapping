@@ -1,13 +1,15 @@
 import sys
+from SuffixTree import SuffixTree
 
 
 def map_dna(input_file):
     # Parse input
-    sequence = None
+    sequence = "mississippi$"
     k = 0
 
     # Build Suffix Tree
-    suffix_tree = None
+    suffix_tree = SuffixTree(sequence)
+    #print suffix_tree.nodes
 
     # Map DNA sequence
     find_dna_mapping(suffix_tree, sequence, k)
@@ -17,6 +19,10 @@ def map_dna(input_file):
 
 def find_dna_mapping(suffix_tree, sequence, k):
     # Prepare pattern matching algorithm
+    suffix_array = suffix_array_from_suffix_tree(suffix_tree)
+    bwt = []
+    first_occurences = {}
+    counts = {}
 
     def find_pattern_matches(kmer):
         return []
@@ -48,6 +54,26 @@ def find_dna_mapping(suffix_tree, sequence, k):
                 candidate_mapping_indices[potential_sequence_index] += 1
 
     return candidate_mapping_indices
+
+
+def suffix_array_from_suffix_tree(suffix_tree):
+    suffix_array = []
+
+    def traverse_suffix_tree(node, edge_length):
+        # sort edges
+        edges = sorted(node.get_edges())
+
+        # is node a leaf node?
+        if len(edges) == 0:
+            suffix_array.append(node.start - edge_length)
+        else:
+            for edge in edges:
+                child_node = suffix_tree.nodes[node.get_edge(edge)]
+                traverse_suffix_tree(child_node, edge_length + (node.end - node.start))
+
+    traverse_suffix_tree(suffix_tree.get_root_node(), 0)
+
+    return suffix_array
 
 
 if __name__ == "__main__":
