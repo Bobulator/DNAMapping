@@ -1,13 +1,15 @@
 import sys
 from SuffixTree import SuffixTree
+from Parser import Parser
 
 
-def map_dna(input_file):
+def map_dna(args):
     # Parse input
-    sequence = "mississippi$"
-    reads = { 'test1': 'miss', 'test2': 'ssi' }
-    k = 2
-    threshold_percentage = .5
+    parser = Parser()
+    sequence_name, sequence = parser.parse_fasta_sequence(args[1])
+    reads = parser.parse_fasta_reads(args[2])
+    k = int(args[3])
+    threshold_percentage = float(args[4])
 
     # Build Suffix Tree
     suffix_tree = SuffixTree(sequence)
@@ -15,11 +17,6 @@ def map_dna(input_file):
     bwt = bwt_from_suffix_array(suffix_array, sequence)
     first_occurrences = build_first_occurrence(bwt)
     counts = build_counts(bwt)
-
-    #print suffix_array
-    #print bwt
-    #print first_occurrences
-    #print counts
 
     # Map DNA sequence
     for read_name, read in reads.iteritems():
