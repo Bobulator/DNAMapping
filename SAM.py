@@ -10,6 +10,5 @@ class SAM:
         quality = "*"
 
         result = [read_name, flag, sequence_name, mapping_quality, cigar, rnext, pnext, tlen, read, quality]
-        result.appen(position)
 
         return "\t".join([str(x) for x in result])
