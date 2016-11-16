@@ -7,6 +7,7 @@ def map_dna(input_file):
     sequence = "mississippi$"
     reads = { 'test1': 'miss', 'test2': 'ssi' }
     k = 2
+    threshold_percentage = .5
 
     # Build Suffix Tree
     suffix_tree = SuffixTree(sequence)
@@ -27,6 +28,11 @@ def map_dna(input_file):
         print candidate_indices
 
         # filter candidates
+        kmers = len(read) - k + 1
+        scoring_threshold = threshold_percentage * kmers
+        for candidate_index, score in candidate_indices.iteritems():
+            if score >= scoring_threshold:
+                print str(candidate_index)
 
         # store results
 
