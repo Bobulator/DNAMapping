@@ -1,6 +1,3 @@
-import sys
-
-
 class Parser:
 
     def __init__(self):
@@ -11,10 +8,10 @@ class Parser:
 
         with open(filename, 'r') as f:
             data = f.read().split()
-            labels = [x[1] for x in data[::2]]
+            labels = [x[1:] for x in data[::2]]
             sequences = data[1::2]
 
             pairs = zip(labels, sequences)
             results = {x[0]: x[1] for x in pairs}
 
-        print(results)
+        return results
