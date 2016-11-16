@@ -1,4 +1,7 @@
-class parser:
+import sys
+
+
+class Parser:
 
     def __init__(self):
         pass
@@ -15,6 +18,3 @@ class parser:
             results = {x[0]: x[1] for x in pairs}
 
         print(results)
-
-
-
