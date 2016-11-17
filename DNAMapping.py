@@ -21,7 +21,7 @@ def map_dna(args):
     counts = build_counts(bwt)
 
     read_file_name = read_file.split(".")[0]
-    sam = SAM(filename="%s-%s.SAM" % (sequence_name, read_file_name))
+    sam = SAM(filename="%s.SAM" % sequence_name)
 
     # Map DNA sequence
     for read_name, read in reads.iteritems():
