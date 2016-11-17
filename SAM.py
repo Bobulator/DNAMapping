@@ -7,7 +7,7 @@ class SAM:
             f.write("HEADER")
 
 
-    def generate_sam_output(self, read_name, sequence_name, position, read):
+    def append_sam_output(self, read_name, sequence_name, position, read):
         flag = 0
         mapping_quality = 255
         cigar = "%dM" % len(read)
