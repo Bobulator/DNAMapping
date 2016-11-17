@@ -8,11 +8,7 @@ class Parser:
 
         with open(filename, 'r') as f:
             data = f.read().split()
-            labels = [x[1:] for x in data[::2]]
-            sequences = data[1::2]
-
-            pairs = zip(labels, sequences)
-            results = {x[0]: x[1] for x in pairs}
+            results = {data[i][1:]: data[i+1] for i in range(0, len(data) - 1, 2)}
 
         return results
 
