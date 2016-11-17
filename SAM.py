@@ -4,7 +4,7 @@ class SAM:
         self.filename = filename
 
         with open(filename, 'w') as f:
-            f.write("HEADER")
+            f.write("HEADER\n")
 
 
     def append_sam_output(self, read_name, sequence_name, position, read):
@@ -20,6 +20,6 @@ class SAM:
         result_string = "\t".join([str(x) for x in result])
 
         with open(self.filename, 'a') as f:
-            f.write(result_string)
+            f.write("\n%s" % result_string)
 
         return result_string
