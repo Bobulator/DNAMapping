@@ -8,7 +8,8 @@ def map_dna(args):
     # Parse input
     parser = Parser()
     sequence_name, sequence = parser.parse_fasta_sequence(args[1])
-    reads = parser.parse_fasta_reads(args[2])
+    read_file = args[2]
+    reads = parser.parse_fasta_reads(read_file)
     k = int(args[3])
     threshold_percentage = float(args[4])
 
@@ -19,7 +20,8 @@ def map_dna(args):
     first_occurrences = build_first_occurrence(bwt)
     counts = build_counts(bwt)
 
-    sam = SAM()
+    read_file_name = read_file.split(".")[0]
+    sam = SAM(filename="%s-%s" % (sequence_name, read_file_name))
 
     # Map DNA sequence
     for read_name, read in reads.iteritems():
@@ -30,7 +32,7 @@ def map_dna(args):
         scoring_threshold = threshold_percentage * kmers
         for candidate_index, score in candidate_indices.iteritems():
             if score >= scoring_threshold:
-                print sam.generate_sam_output(read_name=read_name, sequence_name=sequence_name,
+                print sam.append_sam_output(read_name=read_name, sequence_name=sequence_name,
                                               position=candidate_index+1, read=read)
 
         # store results
