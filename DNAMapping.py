@@ -11,7 +11,6 @@ def map_dna(args):
     read_file = args[2]
     reads = parser.parse_fasta_reads(read_file)
     k = int(args[3])
-    threshold_percentage = float(args[4])
 
     # Build Suffix Tree
     suffix_tree = SuffixTree(sequence)
@@ -25,19 +24,10 @@ def map_dna(args):
 
     # Map DNA sequence
     for read_name, read in reads.iteritems():
-        candidate_indices = find_dna_mapping(suffix_array, bwt, first_occurrences, counts, read, k)
+        candidate_index = find_dna_mapping(suffix_array, bwt, first_occurrences, counts, read, k)
 
-        # filter candidates
-        kmers = len(read) - k + 1
-        scoring_threshold = threshold_percentage * kmers
-        for candidate_index, score in candidate_indices.iteritems():
-            if score >= scoring_threshold:
-                print sam.append_sam_output(read_name=read_name, sequence_name=sequence_name,
-                                              position=candidate_index+1, read=read)
-
-        # store results
-
-    # Output results
+        print sam.append_sam_output(read_name=read_name, sequence_name=sequence_name,
+                                    position=candidate_index+1, read=read)
 
 
 def find_dna_mapping(suffix_array, bwt, first_occurrences, counts, read, k):
@@ -81,6 +71,8 @@ def find_dna_mapping(suffix_array, bwt, first_occurrences, counts, read, k):
     # Perform pattern matching using suffix_tree with each kmer storing results for each matching kmer index relative
     # to its location within the read, i.e. matching_index - relative_index = potential_read_mapping_index
     candidate_mapping_indices = {}
+    max_index = -1
+    max_score = -1
     for kmer, relative_indices in kmer_indices.iteritems():
         matching_indices = find_pattern_matches(kmer)
 
@@ -93,7 +85,11 @@ def find_dna_mapping(suffix_array, bwt, first_occurrences, counts, read, k):
 
                 candidate_mapping_indices[potential_read_index] += 1
 
-    return candidate_mapping_indices
+                if candidate_mapping_indices[potential_read_index] > max_score:
+                    max_index = potential_read_index
+                    max_score = candidate_mapping_indices[potential_read_index]
+
+    return max_index
 
 
 def suffix_array_from_suffix_tree(suffix_tree):
