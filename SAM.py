@@ -3,8 +3,9 @@ class SAM:
     def __init__(self, filename):
         self.filename = filename
 
+        header = "@HD\tVN:1.0\tSO:unknown"
         with open(filename, 'w') as f:
-            f.write("HEADER\n")
+            f.write(header)
 
 
     def append_sam_output(self, read_name, sequence_name, position, read):
