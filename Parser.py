@@ -18,7 +18,7 @@ class Parser:
         with open(filename, 'r') as f:
             data = f.read().split()
             name = data[0][1:]
-            sequence = data[1]
+            sequence = "".join(data[1:])
             results = (name, sequence)
 
         return results
