@@ -9,21 +9,44 @@ def map_dna(args):
     parser = Parser()
     sequence_name, sequence = parser.parse_fasta_sequence(args[1])
     read_file = args[2]
-    reads = parser.parse_fasta_reads(read_file)
     k = int(args[3])
 
     # Build Suffix Tree
-    suffix_tree = SuffixTree(sequence)
-    suffix_array = suffix_array_from_suffix_tree(suffix_tree)
+    print "Building Suffix Tree...",
+    with SuffixTree(sequence) as suffix_tree:
+        print "DONE"
+
+        print "Building Suffix Array...",
+        suffix_array = suffix_array_from_suffix_tree(suffix_tree)
+        print "DONE"
+
+    del suffix_tree
+
+    print "Building BWT...",
     bwt = bwt_from_suffix_array(suffix_array, sequence)
+    print "DONE"
+
+    print "Building First Occurrence Table..."
     first_occurrences = build_first_occurrence(bwt)
+    print "DONE"
+
+    print "Building Counts Table..."
     counts = build_counts(bwt)
+    print "DONE"
 
     read_file_name = read_file.split(".")[0]
     sam = SAM(filename="%s.SAM" % sequence_name)
 
+    reads = parser.parse_fasta_reads(read_file)
+
     # Map DNA sequence
+    print "Beginning Mapping Process"
+    counter = 0
     for read_name, read in reads.iteritems():
+        counter += 1
+
+        print "Mapping Read " + str(counter) + " "
+
         candidate_index = find_dna_mapping(suffix_array, bwt, first_occurrences, counts, read, k)
 
         print sam.append_sam_output(read_name=read_name, sequence_name=sequence_name,

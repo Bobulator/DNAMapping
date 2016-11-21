@@ -7,8 +7,13 @@ class Parser:
         results = {}
 
         with open(filename, 'r') as f:
-            data = f.read().split()
-            results = {data[i][1:]: data[i+1] for i in range(0, len(data) - 1, 2)}
+            for line in f:
+                if line[0] == '>':
+                    read_name = line[1:].strip()
+                    results[read_name] = ''
+
+                else:
+                    results[read_name] += line.strip()
 
         return results
 
@@ -18,7 +23,7 @@ class Parser:
         with open(filename, 'r') as f:
             data = f.read().split()
             name = data[0][1:]
-            sequence = "".join(data[1:])
+            sequence = "".join(data[1:]).upper()
             results = (name, sequence)
 
         return results

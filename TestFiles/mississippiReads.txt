@@ -1,5 +1,8 @@
 >R1
-miss
+m
+i
+s
+s
 >R2
 ppi
 >R3
