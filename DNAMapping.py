@@ -13,12 +13,12 @@ def map_dna(args):
 
     # Build Suffix Tree
     print "Building Suffix Tree...",
-    with SuffixTree(sequence) as suffix_tree:
-        print "DONE"
+    suffix_tree = SuffixTree(sequence)
+    print "DONE"
 
-        print "Building Suffix Array...",
-        suffix_array = suffix_array_from_suffix_tree(suffix_tree)
-        print "DONE"
+    print "Building Suffix Array...",
+    suffix_array = suffix_array_from_suffix_tree(suffix_tree)
+    print "DONE"
 
     del suffix_tree
 
