@@ -1,9 +1,9 @@
 class SAM:
 
-    def __init__(self, filename):
+    def __init__(self, filename, sequence_length):
         self.filename = filename
 
-        header = "@HD\tVN:1.0\tSO:unknown"
+        header = "@HD\tVN:1.0\tSO:unknown\n@SQ\tSN:%s\tLN:%s" % (filename, sequence_length)
         with open(filename, 'w') as f:
             f.write(header)
 

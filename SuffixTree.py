@@ -3,7 +3,7 @@ __author__ = 'masaki'
 import sys
 from collections import OrderedDict
 
-oo = sys.maxint / 2
+oo = sys.maxsize / 2
 
 
 class Node:
@@ -205,7 +205,7 @@ class SuffixTree:
 
     def print_edges(self, x):
         for key, child in self.nodes[x].get_edges().iteritems():
-            print self.edge_string(child)
+            print(self.edge_string(child))
             self.print_edges(child)
 
     def print_gv_internal_nodes(self, x, stree):
@@ -267,16 +267,16 @@ if __name__ == "__main__":
     text = "mississippi$"
     suffix_tree = SuffixTree(text)
 
-    print suffix_tree.get_graphviz_tree()
+    print(suffix_tree.get_graphviz_tree())
     root = suffix_tree.get_root_node()
     cur_node = root
 
-    print root
+    print(root)
     for edge_char, edge_start in cur_node.get_edges().iteritems():
         edge = suffix_tree.get_tree_edge(cur_node, edge_char)
         edge_idx = cur_node.get_edge(edge_char)
 
-        print "edge char:", edge_char, "(", edge_start, ")"
-        print "\tchild start:", edge.get_start()
-        print "\tchild end:", edge.get_end()
-        print "\tchild substring:", suffix_tree.edge_string(edge_idx)
+        print("edge char:", edge_char, "(", edge_start, ")")
+        print("\tchild start:", edge.get_start())
+        print("\tchild end:", edge.get_end())
+        print("\tchild substring:", suffix_tree.edge_string(edge_idx))

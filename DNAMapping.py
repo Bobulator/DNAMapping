@@ -12,45 +12,45 @@ def map_dna(args):
     k = int(args[3])
 
     # Build Suffix Tree
-    print "Building Suffix Tree...",
+    print("Building Suffix Tree...",)
     suffix_tree = SuffixTree(sequence)
-    print "DONE"
+    print("DONE")
 
-    print "Building Suffix Array...",
+    print("Building Suffix Array...",)
     suffix_array = suffix_array_from_suffix_tree(suffix_tree)
-    print "DONE"
+    print("DONE")
 
     del suffix_tree
 
-    print "Building BWT...",
+    print("Building BWT...",)
     bwt = bwt_from_suffix_array(suffix_array, sequence)
-    print "DONE"
+    print("DONE")
 
-    print "Building First Occurrence Table..."
+    print("Building First Occurrence Table...")
     first_occurrences = build_first_occurrence(bwt)
-    print "DONE"
+    print("DONE")
 
-    print "Building Counts Table..."
+    print("Building Counts Table...")
     counts = build_counts(bwt)
-    print "DONE"
+    print("DONE")
 
     read_file_name = read_file.split(".")[0]
-    sam = SAM(filename="%s.SAM" % sequence_name)
+    sam = SAM(filename="%s.SAM" % sequence_name, sequence_length=len(sequence))
 
     reads = parser.parse_fasta_reads(read_file)
 
     # Map DNA sequence
-    print "Beginning Mapping Process"
+    print("Beginning Mapping Process")
     counter = 0
     for read_name, read in reads.iteritems():
         counter += 1
 
-        print "Mapping Read " + str(counter) + " "
+        print("Mapping Read " + str(counter) + " ")
 
         candidate_index = find_dna_mapping(suffix_array, bwt, first_occurrences, counts, read, k)
 
-        print sam.append_sam_output(read_name=read_name, sequence_name=sequence_name,
-                                    position=candidate_index+1, read=read)
+        print(sam.append_sam_output(read_name=read_name, sequence_name=sequence_name,
+                                    position=candidate_index+1, read=read))
 
 
 def find_dna_mapping(suffix_array, bwt, first_occurrences, counts, read, k):
