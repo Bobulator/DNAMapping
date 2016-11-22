@@ -13,7 +13,7 @@ class Parser:
                     results[read_name] = ''
 
                 else:
-                    results[read_name] += line.strip()
+                    results[read_name] += line.strip().upper()
 
         return results
 
